@@ -30,7 +30,7 @@ useEffect(() => {
     return <Auth />;
   }
 
-  return <Dashboard user={user}/>;
+  return <Dashboard />;
 };
 
 export default App;
