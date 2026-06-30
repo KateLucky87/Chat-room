@@ -1,10 +1,12 @@
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
-import { useEffect } from "react"
+import { useChatStore } from "../store/useChatStore"
+import { supabase } from "../supabaseClient"
+import { useNavigate } from "react-router-dom";
 
 const schema = yup.object({
-  name: yup.string().required("Имя обязательно"),
+  name: yup.string().required(),
 }).required()
 
 
@@ -22,10 +24,23 @@ export const CreateRoom =()=>{
         resolver: yupResolver(schema),
       })
 
-      useEffect(()=>{
-        reset()
-      },[])
-     const onSubmit =()=>{}
+       const navigate = useNavigate();
+
+     const onSubmit = async (data: AuthFormInputs) => {
+    const { data: newRoom, error } = await supabase
+      .from("rooms")
+      .insert([{ name: data.name }])
+      .select();
+    if (error) {
+      console.error("Error creating room:", error.message);
+    } else if (newRoom && newRoom.length > 0) {
+      const room = newRoom[0];
+      useChatStore.getState().setRoom({ id: room.id, name: room.name });
+      reset();
+      navigate("/");
+    }
+  };
+
     return (
         <div className="create-room-container">
       <div className="create-room">

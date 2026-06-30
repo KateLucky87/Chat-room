@@ -4,7 +4,7 @@ import {create} from "zustand"
     id:string,
     email:string
 }
-interface Room{
+export interface Room{
     id:number,
     name:string
 }
